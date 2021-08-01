@@ -1,0 +1,610 @@
+import os
+import random
+import time
+import sys
+# Defining Variables------------------------------------------------------------------------------------------------
+
+name = ""
+letterused = []
+wordused = []
+incorrectguess = 0
+guessleft = 6
+easy = {'hints' : 1 }
+hard = {'hints' : 0}
+hintleft1 = [ "Choose hint option to find out" ]
+start_time = time.time()
+hint = ""
+right = 0
+temp1 = ""
+temp2 = ""
+#--------------------------------------------------------------------------------------------------
+# Game Menu:
+print("")
+print("Loading Hangman.py", end = '')
+
+def writeText(string, t):
+    i = 0
+    while i < len(string):
+        print(string[i], end = '')
+        time.sleep(float(t))
+        i += 1
+        sys.stdout.flush()
+
+writeText("...", 1)
+time.sleep(1)
+os.system('clear')
+time.sleep(1.5)
+print("/        /         /\         |\      |    /-------   |\            /|        /\       |\      |")
+time.sleep(0.5)
+print("/        /        /  \        | \     |   //          | \          / |       /  \      | \     |")
+time.sleep(0.5)
+print("/        /       /    \       |  \    |  //           |  \        /  |      /    \     |  \    |")
+time.sleep(0.5)
+print("|--------|      /------\      |   \   |  |    ----|   |   \      /   |     /------\    |   \   |")
+time.sleep(0.5)
+print("/        /     /        \     |    \  |  \        |   |    \    /    |    /        \   |    \  |")
+time.sleep(0.5)
+print("/        /    /          \    |     \ |   \       |   |     \  /     |   /          \  |     \ |")  
+time.sleep(0.5)
+print("/        /   /            \   |      \|    \------|   |      \/      |  /            \ |      \|")
+time.sleep(0.5)
+print(" ________        ")
+print(" |      |        ")
+print(" |      @        ")
+print(" |     /|\       ")
+print(" |     / \       ")
+print("_|", end = ''    )
+print("_______          ")
+print("|        \ ")
+print("|         \ ")
+print("|__________\ ")
+print("")
+
+oppo = 0
+while oppo == 0:
+    print("Hangman Game Menu: ")
+    print("1) Play Game")
+    print("2) human vs. Human")
+    print("3) Help/How To Play?")
+    print("4) Quit")
+    
+    print("What option will you choose: ")
+    menu = input("Input a number to begin: ")
+    if menu == "1":
+        oppo += 1
+    elif menu == "2":
+        print("Please enter the hiddenword that is to be guessed.               ")
+        temp1 = input()
+        t = 0
+        while t == 0:
+            if len(temp1) == 0:
+                print("Please enter your hiddenword. Don't leave it blank.      ")
+                temp1 = input()
+            else:
+                t += 1
+        print("Please enter the hint for the hiddenword.                        ")
+        temp2 = input()
+        tt = 0
+        while tt == 0:
+            if len(temp2) == 0:
+                print("Please enter the hint for your hiddenword.               ")
+                print("You can choose hard mode if you don't want the other player to know the hint for your hiddenword.")
+                temp2 = input()
+            else:
+                tt += 1
+        oppo += 1
+    elif menu == "3":
+        print("")
+        print("• The game starts by asking you to choose modes -- Hard or Easy.")
+        time.sleep(2)
+        print("• Hard Mode contains no hints making it hard.                   ")
+        time.sleep(2)
+        print("• Whereas Easy Mode contains 1 hint if you activate it.         ")
+        time.sleep(2)
+        print("• You then can guess which category to play in.                 ")
+        time.sleep(2)
+        print("• You have 3 options -- You can guess a letter, the whole letter, or you can unlock the hint.")
+        time.sleep(2)
+        print("• Keep in mind, you can only get the hint if you are playing on Easy Mode.                   ")
+        time.sleep(2)
+        print("• The word to guess is represented by a row of dashes, representing each letter of the word. ")
+        time.sleep(2)
+        print("• Each answer you guess wrong will account for 1 body part of the hangman.                   ")
+        time.sleep(2)
+        print("• If you have 6 wrong guesses, its game over and you loose.                                  ")
+        time.sleep(5)
+        print("Ready to proceed?                                                                            ")
+        proceed = input("Type Yes or No: ")
+        zz = 0
+        while zz == 0:
+            if proceed == "Yes" or proceed == "yes":
+                zz += 1
+            elif proceed == "No" or proceed == "no":
+                print("Okay I'll wait...")
+                time.sleep(5)
+                proceed = input("Ready now? ")
+            else:
+                print ("Please print Yes or No.")
+                proceed = input()            
+        time.sleep(1)
+        print("Good luck and have Fun!!                                                                     ")
+        time.sleep(2)
+        print("")
+    elif menu == "4":
+        print("Quitting so soon??")
+        time.sleep(1.5)
+        print("oh well...")
+        time.sleep(1.5)
+        print("Please play again some time!!!!")
+        time.sleep(2)
+        sys.exit()
+    else:
+        print("Please input a number between 1 and 4.")
+        menu = input("Input a number to begin: ")    
+os.system('clear')
+# Introduction to Game:----------------------------------------------------------------------------------------------
+print("Hello player, welcome to hangman!")
+# 
+# Level Mode Selection------------------------------------------------------------
+print("What mode would you like to play in????")
+print("1) Easy | Hints |")
+print("2) Hard | No hints |")
+mode = input("Type a number: ")
+moo = 0
+while moo == 0:
+    if mode == "1":
+        print ("You have chosen difficulty level: easy, good luck!")
+
+        moo += 1 # exits
+    elif mode == "2":
+        print ("You have chosen difficulty level: hard, good luck!")
+
+        moo += 1 # exits
+    else:
+        print("Please type in a number to select your difficulty.")
+        mode = input()
+# ----------------------------------------------------------------------------------------------  
+# the graphics Change code:-------->>>>>
+
+class graphics():
+    def finder(self):
+        if incorrectguess == 0:
+            print(" ________        ")
+            print(" |      |        Letters Used: " + str(letterused))
+            print(" |               Words Used: " + str(wordused))
+            print(" |               Incorrect Guesses: " + str(incorrectguess))
+            print(" |               Guesses Left: " + str(guessleft))
+            print("_|", end = ''  )
+            print("_______        Hint Status: " + str(hintleft1))
+            print("|        \ ")
+            print("|         \ ")
+            print("|__________\ ")
+            print("")
+            wrong = 0
+        elif incorrectguess == 1:
+            print(" ________        ")
+            print(" |      |        Letters Used: " + str(letterused))
+            print(" |      @        Words Used: " + str(wordused))
+            print(" |               Incorrect Guesses: " + str(incorrectguess))
+            print(" |               Guesses Left: " + str(guessleft))
+            print("_|", end = ''  )
+            print("_______        Hint Status: " + str(hintleft1))
+            print("|        \ ")
+            print("|         \ ")
+            print("|__________\ ")
+            print("")
+            wrong = 0
+        elif incorrectguess == 2:
+            print(" ________        ")
+            print(" |      |        Letters Used: " + str(letterused))
+            print(" |      @        Words Used: " + str(wordused))
+            print(" |      |        Incorrect Guesses: " + str(incorrectguess))
+            print(" |               Guesses Left: " + str(guessleft))
+            print("_|", end = ''  )
+            print("_______        Hint Status: " + str(hintleft1))
+            print("|        \ ")
+            print("|         \ ")
+            print("|__________\ ")
+            print("")
+            wrong = 0
+        elif incorrectguess == 3:
+            print(" ________        ")
+            print(" |      |        Letters Used: " + str(letterused))
+            print(" |      @        Words Used: " + str(wordused))
+            print(" |     /|        Incorrect Guesses: " + str(incorrectguess))
+            print(" |               Guesses Left: " + str(guessleft))
+            print("_|", end = ''  )
+            print("_______        Hint Status: " + str(hintleft1))
+            print("|        \ ")
+            print("|         \ ")
+            print("|__________\ ")
+            print("")
+            wrong = 0
+        elif incorrectguess == 4:
+            print(" ________        ")
+            print(" |      |        Letters Used: " + str(letterused))
+            print(" |      @        Words Used: " + str(wordused))
+            print(" |     /|\       Incorrect Guesses: " + str(incorrectguess))
+            print(" |               Guesses Left: " + str(guessleft))
+            print("_|", end = ''  )
+            print("_______        Hint Status: " + str(hintleft1))
+            print("|        \ ")
+            print("|         \ ")
+            print("|__________\ ")
+            print("")
+            wrong = 0
+        elif incorrectguess == 5:
+            print(" ________        ")
+            print(" |      |        Letters Used: " + str(letterused))
+            print(" |      @        Words Used: " + str(wordused))
+            print(" |     /|\       Incorrect Guesses: " + str(incorrectguess))
+            print(" |     /         Guesses Left: " + str(guessleft))
+            print("_|", end = ''  )
+            print("_______        Hint Status: " + str(hintleft1))
+            print("|        \ ")
+            print("|         \ ")
+            print("|__________\ ")
+            print("")
+            wrong = 0
+        elif incorrectguess == 6:
+            print(" ________        ")
+            print(" |      |        Letters Used: " + str(letterused))
+            print(" |      @        Words Used: " + str(wordused))
+            print(" |     /|\       Incorrect Guesses: " + str(incorrectguess))
+            print(" |     / \       Guesses Left: " + str(guessleft))
+            print("_|", end = ''  )
+            print("_______        Hint Status: " + str(hintleft1))
+            print("|        \ ")
+            print("|         \ ")
+            print("|__________\ ")
+            print("")
+            print("Game Over, you lost!!")
+            time.sleep(2)
+            print("The word was: " + str(hiddenword))
+            time.sleep(2)
+            print("Good luck next time!")
+            time.sleep(3)
+            wrong = 0
+            sys.exit()
+hangman = graphics()
+    
+# Category Selection:-------------------------------------------------------->>
+if menu == "1" or menu == "3":
+    print("Please choose a category to play in:")
+    print("1) Career Occupation")
+    print("2) Astronomy")
+    print("3) Periodic Table of Elements") 
+    category = input("Type a number: ")
+    print("")
+elif menu == "2":
+    print("")
+if menu == "1" or menu == "3":
+    boo = 0
+    while boo == 0:
+        if category == "1":
+            print ("You have chosen category: Career Occupation.")
+            career = {'doctor' : "This occupation requires more training than most other jobs.", 'developer' : "A person who creates computer software", 'plumber' : "Fix water pipes and appliances", 'bartender' : "A person who formulates and serves alcholic drinks", 'garderner' : "Someone who practices gardening, either professionally or as a hobby", 'mechanic' : "someone who uses tools to repair machinery and cars.", 'teacher' : "This person helps students learn", 'lawyer' : "Someone who advises and represents their clients on legal matters in the court of law.", 'pilot' : "Someone who flies a aerial vehicle."}
+            boo += 1 # exits
+        elif category == "2":
+            print ("You have chosen category: Astronomy.")
+            astronomy = {'moon' : "Earth's only natural satellite", 'gravity' : "a natural phenomenon where all things are brought together", 'mars' : "A celestial body which has 2 moons.", 'neptune' : "Most distant planet from the sun.", 'star' : "Luminous point in the night sky.", 'pulsar' : " A highly magnetized rotating neutron star.", 'starlight' : "Light emmited by stars.", 'universe' : " Everything we can touch, feel, sense, measure or detect.", 'atmosphere' : "The envelope of gases surrounding the earth or another planet.", 'geocentric' : "Centered upon the Earth.", 'heliocentric' : "Centered upon the Earth's Sun." } # You can ask scientific terms
+            boo += 1 # exits
+        elif category == "3":
+            print ("You have chosen category: Periodic Table of Elements")
+            ptoe = {'lithium' : "Used in car and phone batteries.", 'Hydrogen' : "Most abundant element in the universe.", 'uranium' : "Heaviest naturally stable element.", 'carbon' : "Hardest known pure element", 'gold' : " Yellow in color.", 'silver' : "It has the highest electrical and thermal conductivity of all metals.", 'tin' : " It is the 49th most common element in the Earth's crust.", 'tungsten' : "Highest melting point of all metals.", 'mercury' : "Often reffered to as liquid silver.", 'titanium' : "This element does not occur naturally.", 'nitrogen' : "Most abundunt gas on earth.", 'neon' : "It is one of the noble gases."}
+            boo += 1 # exits
+        else:
+            print("Please type a number to select a category.")
+            category = input()
+elif menu == "2":
+    pass
+if menu == "1" or menu == "3":
+    if category == "1":
+        choice = random.choice(list(career)) 
+        hint = career
+    elif category == "2":
+        choice = random.choice(list(astronomy))
+        hint = astronomy
+    elif category == "3":
+        choice = random.choice(list(ptoe))
+        hint = ptoe
+elif menu == "2":
+    pass
+if menu == "1" or menu == "3": # Human v computer mode
+    hiddenword = list(choice)
+    openword = list("-" * len(hiddenword))
+elif menu == "2" and mode == "1": # Human v. Human mode easy
+    hiddenword = []
+    hintleft1 = ["Choose hint option to find out..."]
+    hiddenword.append(temp1)
+    openword = list("-" * len(temp1))
+elif menu == "2" and mode == "2": # Human v. Human mode hard 
+    hiddenword = []
+    hintleft1 = ["Choose hint option to find out..."]
+    hiddenword.append(temp1)
+    openword = list("-" * len(temp1))    
+# Game Method Section:------------------------------------------------------->
+class dog():
+    def method(self):
+        count = 0
+        index = 0
+        outcome = False
+        for k in range(1, len(letter) + 1):
+            if len(letterused) == 0:
+                outcome = False
+                break
+            elif letter == letterused[index]:
+                outcome = True
+                break
+            elif letter != letterused[index] and len(letterused) > 0:
+                count += 1
+                index += 1
+        if count == len(letter):
+            outcome = False
+        return(outcome)
+dog1 = dog()
+class cat():
+    def method2(self):    
+        uppercase = False
+        for k in letter:
+            if letter == letter.upper():
+                uppercase  = True 
+            elif letter != letter.upper():
+                uppercase = False
+        return(uppercase)        
+    def method3(self):    
+        upperr = False
+        count = 0
+        for k in word:
+            if ord(k) >= 65 and ord(k) <= 90 and k == k.upper():
+                count += 1 
+            elif k != k.upper():
+                count += 0
+        if count > 0:
+            upperr = True
+        else:
+            upperr = False   
+        return(upperr)
+    def method4(self):
+        np = 0
+        outboop = False
+        for z in range (1, len(wordused) + 1):
+            if word == wordused[np]:
+                outboop = True
+            else:
+                np += 1
+                outboop = False
+        return(outboop)
+    def method5(self):
+        index = 0
+        result = False
+        for z in range (1, len(hiddenword) + 1):
+            if len(word) != len(hiddenword):
+                result = False
+                break
+            elif word[index] == hiddenword[index]:
+                result = True
+                index += 1
+            elif word[index] != hiddenword[index]:
+                result = False
+                break
+        return (result)
+    def method6(self): # This method is the same as method 5 but its temp1 rather than hiddenword becuz it considers the whole word as an element in the list.
+        index = 0
+        resulty = False
+        for z in range (1, len(temp1) + 1):
+            if len(word) != len(temp1):
+                result = False
+                break
+            elif word[index] == temp1[index]:
+                resulty = True
+                index += 1
+            elif word[index] != temp1[index]:
+                resulty = False
+                break
+        return (resulty)            
+dog2 = cat()
+dog3 = cat()
+dog4 = cat()
+dog5 = cat()
+dog6 = cat()
+# Actual Game Code--------------------------------------------------------------------------->
+k = 0
+while k == 0:
+    print("1) Guess a letter")
+    print("2) Guess a word")
+    print("3) Use hint")
+    action = input("Type a number: ")
+    index = 0
+    if action == "1": # Code for Guess Letter Option:------------------------------------>
+        print ("What letter would you like to guess?")
+        letter = input()
+        ups = 0
+        while ups == 0:
+            try:
+                if len(letter) > 1 and int(letter) == int(letter):
+                    print("Please guess only letters, not numbers!")
+                    letter = input()
+            except ValueError:
+                print("Please guess only 1 letter")
+                letter = input()                        
+            if len(letter) < 1:
+                print("Please guess a letter. ( Do not leave it blank )")
+                letter = input()
+            elif dog2.method2() == True:
+                print("Please type only lowercase letters, not uppercase.")
+                letter = input()
+            elif len(letter) == 1 and dog1.method() == True: # check if this checks the whole list of letterused
+                print("This letter is already used, try a different letter!")
+                letter = input()                    
+            try:
+                if len(letter) == 1 and dog1.method() == False and dog2.method2() == False and int(letter) == int(letter):
+                    print("Please guess only letters, not numbers!")
+                    letter = input()
+            except ValueError:
+                ups += 1    # may be causing issue
+        if menu == "1" or menu == "3":
+            n = 0
+            for z in hiddenword:# checks if letter is in the hiddenword
+                if letter == hiddenword[n] or letter.lower() == hiddenword[n]:
+                    openword.insert(n, letter)
+                    openword.pop(n + 1)
+                    n += 1
+                    right += 1
+                elif letter != hiddenword[n]:
+                    n += 1
+            if right == 0:
+                incorrectguess += 1
+                guessleft -= 1
+                letterused.append(letter)
+            else: # this means it matches 
+                incorrectguess += 0
+                letterused.append(letter)
+            hangman.finder()
+            print(openword)
+            right = 0
+            if openword == hiddenword:
+                os.system('clear') 
+                hangman.finder()
+                print(openword)
+                print("Congratulations, you have won the game!!!")
+                time.sleep(1.5)
+                elapsed_time = time.time() - start_time
+                if elapsed_time <= 60 and len(wordused) + len(letterused) == 1:
+                        print("You finished the game in " + str(int(elapsed_time)) + " seconds and in " + str(len(wordused) + len(letterused)) + " try.")
+                elif elapsed_time > 60 and len(wordused) + len(letterused) == 1:
+                    print("You finished the game in " + str(int(elapsed_time / 60)) + " seconds and in " + str(len(wordused) + len(letterused)) + " try.")                
+                elif elapsed_time <= 60 and len(wordused) + len(letterused) > 1:
+                    print("You finished the game in " + str(int(elapsed_time)) + " seconds and in " + str(len(wordused) + len(letterused)) + " tries.")
+                elif elapsed_time > 60 and len(wordused) + len(letterused) > 1:
+                    print("You finished the game in " + str(int(elapsed_time / 60)) + " seconds and in " + str(len(wordused) + len(letterused)) + " tries.")
+                time.sleep(1.5)
+                print("Thanks for Playing!!!")
+                break
+        elif menu == "2": 
+            n = 0
+            for z in temp1:# checks if letter is in the hiddenword
+                if letter == temp1[n] or letter.lower() == temp1[n]:
+                    openword.insert(n, letter)
+                    openword.pop(n + 1)
+                    n += 1
+                    right += 1
+                elif letter != temp1[n]:
+                    n += 1
+            if right == 0:
+                incorrectguess += 1
+                guessleft -= 1
+                letterused.append(letter)
+            else: # this means it matches 
+                incorrectguess += 0
+                letterused.append(letter)
+            hangman.finder()
+            print(openword)
+            right = 0
+            if openword == list(temp1):
+                os.system('clear') 
+                hangman.finder()
+                print(openword)
+                print("Congratulations, you have won the game!!!")
+                elapsed_time = time.time() - start_time                
+                time.sleep(1.5)
+                if elapsed_time <= 60 and len(wordused) + len(letterused) == 1:
+                        print("You finished the game in " + str(int(elapsed_time)) + " seconds and in " + str(len(wordused) + len(letterused)) + " try.")
+                elif elapsed_time > 60 and len(wordused) + len(letterused) == 1:
+                    print("You finished the game in " + str(int(elapsed_time / 60)) + " seconds and in " + str(len(wordused) + len(letterused)) + " try.")                
+                elif elapsed_time <= 60 and len(wordused) + len(letterused) > 1:
+                    print("You finished the game in " + str(int(elapsed_time)) + " seconds and in " + str(len(wordused) + len(letterused)) + " tries.")
+                elif elapsed_time > 60 and len(wordused) + len(letterused) > 1:
+                    print("You finished the game in " + str(int(elapsed_time / 60)) + " seconds and in " + str(len(wordused) + len(letterused)) + " tries.")
+                time.sleep(1.5)
+                print("Thanks for Playing!!!")
+                break
+    elif action == "2": # Code for Guess Word option--------------------------->
+        print ("What word would you like to guess?")
+        word = input()
+        if len(word) > 1 and dog4.method4() == True: 
+            print("This word is already used, try a different word!")
+            word = input()
+        elif dog3.method3() == True:
+            print("Only lowercase words only!! Try again...")
+            word = input()
+        try:
+            if len(word) > 1 and int(word) == int(word):
+                print("Please guess only word, not numbers!")
+                word = input()
+        except ValueError:
+            data5 = dog5.method5()
+            data6 = dog6.method6()
+            if data5 == False and menu == "1" or data5 == False and menu == "3": # compares the word to hiddenword
+                wordused.append(word)
+                incorrectguess += 1
+                guessleft -= 1
+                hangman.finder()
+                print(openword)
+            elif data5 == True and menu == "1" or data5 == True and menu == "3":
+                os.system('clear') 
+                wordused.append(word)
+                hangman.finder()
+                print(hiddenword)
+                print("Congratulations, you have won the game!!!")
+                time.sleep(1.5)
+                elapsed_time = time.time() - start_time
+                if elapsed_time <= 60 and len(wordused) + len(letterused) == 1:
+                        print("You finished the game in " + str(int(elapsed_time)) + " seconds and in " + str(len(wordused) + len(letterused)) + " try.")
+                elif elapsed_time > 60 and len(wordused) + len(letterused) == 1:
+                    print("You finished the game in " + str(int(elapsed_time / 60)) + " seconds and in " + str(len(wordused) + len(letterused)) + " try.")                
+                elif elapsed_time <= 60 and len(wordused) + len(letterused) > 1:
+                    print("You finished the game in " + str(int(elapsed_time)) + " seconds and in " + str(len(wordused) + len(letterused)) + " tries.")
+                elif elapsed_time > 60 and len(wordused) + len(letterused) > 1:
+                    print("You finished the game in " + str(int(elapsed_time / 60)) + " seconds and in " + str(len(wordused) + len(letterused)) + " tries.")
+                time.sleep(1.5)
+                print("Thanks for Playing!!!")
+                break
+            elif data6 == False and menu == "2":
+                wordused.append(word)
+                incorrectguess += 1
+                guessleft -= 1
+                hangman.finder()
+                print(openword)
+            elif data6 == True and menu == "2":
+                os.system('clear') 
+                wordused.append(word)
+                hangman.finder()
+                print(hiddenword)
+                print("Congratulations, you have won the game!!!")
+                time.sleep(1.5)
+                elapsed_time = time.time() - start_time
+                if elapsed_time <= 60 and len(wordused) + len(letterused) == 1:
+                        print("You finished the game in " + str(int(elapsed_time)) + " seconds and in " + str(len(wordused) + len(letterused)) + " try.")
+                elif elapsed_time > 60 and len(wordused) + len(letterused) == 1:
+                    print("You finished the game in " + str(int(elapsed_time / 60)) + " seconds and in " + str(len(wordused) + len(letterused)) + " try.")                
+                elif elapsed_time <= 60 and len(wordused) + len(letterused) > 1:
+                    print("You finished the game in " + str(int(elapsed_time)) + " seconds and in " + str(len(wordused) + len(letterused)) + " tries.")
+                elif elapsed_time > 60 and len(wordused) + len(letterused) > 1:
+                    print("You finished the game in " + str(int(elapsed_time / 60)) + " seconds and in " + str(len(wordused) + len(letterused)) + " tries.")
+                time.sleep(1.5)
+                print("Thanks for Playing!!!")
+                break
+# Hint Option Code: ------------------------------------------------------------------>  
+    elif action == "3" and menu == "1" or action == "3" and menu == "3":
+        if mode == "1":
+            hintleft1.pop()
+            hintleft1.append(hint[choice])
+            print("Hint --> " + str(hintleft1))
+            print("")
+        elif mode ==  "2":
+            hintleft1.pop()
+            print("No hint available on Hard Mode!")
+            print("")
+            hintleft1.append("No hint available on Hard Mode!!")
+    elif action == "3" and menu == "2":
+        if mode == "1":
+            hintleft1.pop()
+            hintleft1.append(temp2)
+            print("Hint --> " + str(hintleft1))
+            print("")
+        elif mode ==  "2":
+            hintleft1.pop()
+            hintleft1.append("No hint available on Hard Mode!!") 
+            print("No hint available on Hard Mode!")
+            print("")
